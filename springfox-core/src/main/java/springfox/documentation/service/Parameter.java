@@ -21,7 +21,11 @@ package springfox.documentation.service;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.google.common.base.Optional;
+import org.springframework.http.HttpMethod;
 import springfox.documentation.schema.ModelReference;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Parameter {
   private final String name;
@@ -34,6 +38,7 @@ public class Parameter {
   private final AllowableValues allowableValues;
   private final String paramType;
   private final String paramAccess;
+  private final List<HttpMethod> methods;
 
   public Parameter(
       String name,
@@ -47,6 +52,22 @@ public class Parameter {
       String paramType,
       String paramAccess) {
 
+    this(name, description, defaultValue, required, allowMultiple, modelRef,
+            type, allowableValues, paramType, paramAccess, Arrays.asList(HttpMethod.values()));
+
+  }public Parameter(
+      String name,
+      String description,
+      String defaultValue,
+      boolean required,
+      boolean allowMultiple,
+      ModelReference modelRef,
+      Optional<ResolvedType> type,
+      AllowableValues allowableValues,
+      String paramType,
+      String paramAccess,
+      List<HttpMethod> methods) {
+
     this.description = description;
     this.defaultValue = defaultValue;
     this.required = required;
@@ -57,6 +78,7 @@ public class Parameter {
     this.paramType = paramType;
     this.paramAccess = paramAccess;
     this.name = name;
+    this.methods = methods;
   }
 
   public Optional<ResolvedType> getType() {
@@ -97,5 +119,9 @@ public class Parameter {
 
   public ModelReference getModelRef() {
     return modelRef;
+  }
+
+  public List<HttpMethod> getMethods() {
+    return methods;
   }
 }

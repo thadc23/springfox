@@ -20,6 +20,9 @@
 package springfox.documentation.spring.web.readers.operation;
 
 import com.fasterxml.classmate.TypeResolver;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -60,8 +63,15 @@ public class OperationParameterReader implements OperationBuilderPlugin {
   }
 
   @Override
-  public void apply(OperationContext context) {
-    context.operationBuilder().parameters(context.getGlobalOperationParameters());
+  public void apply(final OperationContext context) {
+
+    Iterable<Parameter> includedParams = Iterables.filter(context.getGlobalOperationParameters(), new Predicate<Parameter>() {
+      @Override
+      public boolean apply(Parameter input) {
+        return input.getMethods().contains(context.httpMethod());
+      }
+    });
+    context.operationBuilder().parameters(Lists.newArrayList(includedParams));
     context.operationBuilder().parameters(readParameters(context));
   }
 
