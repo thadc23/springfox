@@ -1,5 +1,5 @@
 package springfox.test.contract.swaggertests
-import groovy.json.JsonOutput
+
 import groovy.json.JsonSlurper
 import org.skyscreamer.jsonassert.JSONAssert
 import org.skyscreamer.jsonassert.JSONCompareMode
@@ -51,17 +51,18 @@ public class FunctionContractSpec extends Specification implements FileAccess {
     def response = http.exchange(request, String)
     then:
     String raw = response.body
-    String actual = JsonOutput.prettyPrint(raw)
     response.statusCode == HttpStatus.OK
-//      println(actual)
+    //Uncomment this to see a better json diff when tests fail
+//    println(JsonOutput.prettyPrint(raw))
 
     def withPortReplaced = contract.replaceAll("__PORT__", "$port")
-    JSONAssert.assertEquals(withPortReplaced, actual, JSONCompareMode.NON_EXTENSIBLE)
+    JSONAssert.assertEquals(withPortReplaced, raw, JSONCompareMode.NON_EXTENSIBLE)
 
     where:
     contractFile                                                  | groupName
     'swagger.json'                                                | 'petstore'
     'swaggerTemplated.json'                                       | 'petstoreTemplated'
+    'declaration-bugs-service.json'                               | 'bugs'
     'declaration-business-service.json'                           | 'businessService'
     'declaration-concrete-controller.json'                        | 'concrete'
     'declaration-controller-with-no-request-mapping-service.json' | 'noRequestMapping'
@@ -114,11 +115,11 @@ public class FunctionContractSpec extends Specification implements FileAccess {
     when:
     def response = http.exchange(request, String)
     then:
-    String actual = JsonOutput.prettyPrint(response.body)
     response.statusCode == HttpStatus.OK
-//      println(actual)
+    //Uncomment this to see a better json diff when tests fail
+//    println(JsonOutput.prettyPrint(response.body))
 
-    JSONAssert.assertEquals(contract, actual, NON_EXTENSIBLE)
+    JSONAssert.assertEquals(contract, response.body, NON_EXTENSIBLE)
   }
 
   @Unroll
@@ -133,13 +134,11 @@ public class FunctionContractSpec extends Specification implements FileAccess {
     def response = http.exchange(request, String)
     then:
     String raw = response.body
-    String actual = JsonOutput.prettyPrint(raw)
     response.statusCode == HttpStatus.OK
     //Uncomment this to see a better json diff when tests fail
-//      actual == contract
-//      println(actual)
+//    println(JsonOutput.prettyPrint(response.body))
 
-    JSONAssert.assertEquals(contract, actual, NON_EXTENSIBLE)
+    JSONAssert.assertEquals(contract, raw, NON_EXTENSIBLE)
 
 //    and: "both json docs are the same length"
 //      contract.length() == actual.length()
@@ -179,9 +178,9 @@ public class FunctionContractSpec extends Specification implements FileAccess {
 
   @Configuration
   @ComponentScan([
-    "springfox.documentation.spring.web.dummy.controllers",
-    "springfox.test.contract.swagger",
-    "springfox.petstore.controller"
+      "springfox.documentation.spring.web.dummy.controllers",
+      "springfox.test.contract.swagger",
+      "springfox.petstore.controller"
   ])
   @Import([SecuritySupport, Swagger12TestConfig, Swagger2TestConfig])
   static class Config {

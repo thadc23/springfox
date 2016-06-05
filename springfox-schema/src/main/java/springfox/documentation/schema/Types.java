@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2015 the original author or authors.
+ *  Copyright 2015-2016 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package springfox.documentation.schema;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.google.common.collect.ImmutableMap;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -38,33 +39,45 @@ public class Types {
     throw new UnsupportedOperationException();
   }
 
-  private static final Set<String> baseTypes
-          = newHashSet("int", "date", "string", "double", "float", "boolean", "byte", "object", "long", "date-time");
+  private static final Set<String> baseTypes = newHashSet(
+      "int",
+      "date",
+      "string",
+      "double",
+      "float",
+      "boolean",
+      "byte",
+      "object",
+      "long",
+      "date-time",
+      "file");
   private static final Map<Type, String> typeNameLookup = ImmutableMap.<Type, String>builder()
-          .put(Long.TYPE, "long")
-          .put(Short.TYPE, "int")
-          .put(Integer.TYPE, "int")
-          .put(Double.TYPE, "double")
-          .put(Float.TYPE, "float")
-          .put(Byte.TYPE, "byte")
-          .put(Boolean.TYPE, "boolean")
-          .put(Character.TYPE, "string")
+      .put(Long.TYPE, "long")
+      .put(Short.TYPE, "int")
+      .put(Integer.TYPE, "int")
+      .put(Double.TYPE, "double")
+      .put(Float.TYPE, "float")
+      .put(Byte.TYPE, "byte")
+      .put(Boolean.TYPE, "boolean")
+      .put(Character.TYPE, "string")
 
-          .put(Date.class, "date-time")
-          .put(String.class, "string")
-          .put(Object.class, "object")
-          .put(Long.class, "long")
-          .put(Integer.class, "int")
-          .put(Short.class, "int")
-          .put(Double.class, "double")
-          .put(Float.class, "float")
-          .put(Boolean.class, "boolean")
-          .put(Byte.class, "byte")
-          .put(BigDecimal.class, "double")
-          .put(BigInteger.class, "long")
-          .put(Currency.class, "string")
-          .put(UUID.class, "string")
-          .build();
+      .put(Date.class, "date-time")
+      .put(java.sql.Date.class, "date-time")
+      .put(String.class, "string")
+      .put(Object.class, "object")
+      .put(Long.class, "long")
+      .put(Integer.class, "int")
+      .put(Short.class, "int")
+      .put(Double.class, "double")
+      .put(Float.class, "float")
+      .put(Boolean.class, "boolean")
+      .put(Byte.class, "byte")
+      .put(BigDecimal.class, "double")
+      .put(BigInteger.class, "long")
+      .put(Currency.class, "string")
+      .put(UUID.class, "string")
+      .put(MultipartFile.class, "file")
+      .build();
 
   public static String typeNameFor(Type type) {
     return typeNameLookup.get(type);
